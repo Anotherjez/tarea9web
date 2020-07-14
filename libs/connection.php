@@ -9,11 +9,21 @@
             $this->myCon = mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME);
 
             if($this->myCon === false){
-                echo<<<ECHO
-                <script>
-                    window.location = 'install.php';
-                </script>";
-                ECHO;
+                if(strpos($_SERVER['REQUEST_URI'], 'pages') !== false ){
+
+                    echo<<<ECHO
+                    <script>
+                        window.location = 'install.php';
+                    </script>";
+                    ECHO;
+                }
+                else{
+                    echo<<<ECHO
+                    <script>
+                        window.location = 'pages/install.php';
+                    </script>";
+                    ECHO;
+                }
                 exit();
             }
         }
