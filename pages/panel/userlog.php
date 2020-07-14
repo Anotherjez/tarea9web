@@ -35,18 +35,10 @@ if(!$user->getAdmin()){
   header("Location: home.php");
 }
 
-if($_POST){
+if(!isset($_GET['log'])){
 
-  foreach($_POST as &$value){
-    $value = addslashes($value);
-  }        
+    header("Location: user.php");
 
-  extract($_POST);
-
-  $sql = "delete from users where username = '{$username}'";
-  Connection::execute($sql);
-    
-  header("Refresh:0");
 }
 
 include('headerpanel.php');
@@ -54,9 +46,7 @@ include('headerpanel.php');
 ?>
 
 <div class="container">
-  <h2>Usuarios</h2>
-  <br>
-  <a href="useredit.php" class="btn btn-success"><i class="fas fa-user-plus"></i> Añadir usuario</a>
+  <h2>Logs de Usuarios</h2>
 </div>
 <br>
 
@@ -65,33 +55,17 @@ include('headerpanel.php');
     <thead class="thead-dark">
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Nombre</th>
-            <th scope="col">username</th>
-            <th scope="col">Rol</th>
+            <th scope="col">Usuario ID</th>
+            <th scope="col">Huesped ID</th>
+            <th scope="col">Direccion IP</th>
             <th scope="col">Accion</th>
+            <th scope="col">Fecha</th>
         </tr>
     </thead>
     <tbody>
-        <?php GetUsers(); ?>
+        <?php GetLogs($_GET['log']); ?>
     </tbody>
     </table>
 <div>
-
-<script>
-
-  function DeleteUser(e){
-    tr = e.parentNode.parentNode;
-    if(confirm('¿Esta seguro que desea eliminar?')){
-      value = tr.getAttribute('index');
-      $.ajax({
-        url: 'users.php',
-        type: 'POST',
-        dataType: 'html',
-        data: {'username': value}
-      });
-    } 
-  }
-  
-</script>
 
 <?php include('../footer.php'); ?>

@@ -47,13 +47,25 @@ if($_POST){
     if(count($objs) > 0){
         
         $sql = "update guests set nombre = '{$nombre}', apellido = '{$apellido}', correo = '{$correo}', telefono = '{$telefono}', pais = '{$pais}', firstdate = '{$firstdate}', lastdate = '{$lastdate}', room = {$room} where pasaporte = '{$pasaporte}'";
-        
+        $userid = $user->getId();
+        $guestid = $objs[0];
+        $guestid = $guestid['id'];
+        Write_Log("Editar huesped", $userid, $guestid);
     }else{
         $sql = "insert into guests(nombre, apellido, pasaporte, correo, telefono, pais, firstdate, lastdate, room) 
         values('{$nombre}','{$apellido}','{$pasaporte}','{$correo}','{$telefono}','{$pais}','{$firstdate}','{$lastdate}',{$room})";
     }
     
     Connection::execute($sql);
+    
+    if(!count($objs) > 0){
+        $sql = "select * from guests where pasaporte = '{$pasaporte}'";
+        $objs = Connection::query_arr($sql);
+        $userid = $user->getId();
+        $guestid = $objs[0];
+        $guestid = $guestid['id'];
+        Write_Log("Añadir huesped", $userid, $guestid);
+    }
     
     header("Location:home.php");
 
@@ -77,7 +89,7 @@ include('headerpanel.php');
 
 <div class="container" style="padding-bottom: 40px;">
     
-    <h2>Editar Huesped</h2>
+    <?php if($isEditing) : echo "<h2>Editar Huesped</h2>"; else : echo "<h2>Añadir Huesped</h2>";endif; ?>
     <br>    
     <form enctype="multipart/form-data" method="POST">
 
@@ -96,9 +108,9 @@ include('headerpanel.php');
         <?= Input('pais','Pais de origen','', ['placeholder'=>'Republica Dominicana']) ?>
         <?= Input('firstdate','Fecha de llegada','', ['type'=>'date']) ?>
         <?= Input('lastdate','Fecha de salida','', ['type'=>'date']) ?>
-        <?= Input('room','Numero de habitacion','', ['placeholder'=>'301']) ?>
+        <?= Input('room','Numero de habitacion','', ['placeholder'=>'301','type'=>'number']) ?>
 
-        <button type="submit" class="btn btn-primary">Editar</button>
+        <button type="submit" class="btn btn-primary">Registrar</button>
         <a href="home.php" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>

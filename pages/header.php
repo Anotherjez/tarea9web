@@ -21,7 +21,6 @@
   <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
     <div class="nav">
       <a class="btn btn-primary" href="guests.php"><span class="font-weight-bold">Registrarse</span></a>
-      <a class="nav-item nav-link active" href="#homeNavBar">Home <span class="sr-only">(current)</span></a>
       <a class="nav-item nav-link" href="#roomsCards">Rooms</a>
       <a class="nav-item nav-link" href="panel/home.php">Panel</a>
       <a class="nav-item nav-link" href="logout.php">Cerrar sesion</a>

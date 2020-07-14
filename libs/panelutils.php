@@ -17,7 +17,7 @@ function GetGuests()
         foreach ($data as $guest) {
             $num = $num + 1;
             echo<<<GUEST
-            <tr>
+            <tr index="{$guest['pasaporte']}">
                 <th scope="row">{$num}</th>
                 <td>{$guest['nombre']}</td>
                 <td>{$guest['apellido']}</td>
@@ -31,7 +31,7 @@ function GetGuests()
                 <td>
                 <a href="guestedit.php?guest={$guest['pasaporte']}" class="btn btn-outline-warning">Editar</a>
                 <br>
-                <a class="btn btn-outline-danger">Eliminar</a>
+                <button onclick="DeleteGuest(this)" class="btn btn-outline-danger">Eliminar</button>
                 </td>
             </tr>
             GUEST;
@@ -60,14 +60,15 @@ function GetUsers()
                 $role = "Usuario";
             }
             echo<<<USER
-            <tr>
+            <tr index="{$user['username']}">
                 <th scope="row">{$num}</th>
                     <td>{$user['name']}</td>
                     <td>{$user['username']}</td>
                     <td>{$role}</td>
                 <td>
                 <a href="useredit.php?user={$user['id']}" class="btn btn-outline-warning">Editar</a>
-                <a class="btn btn-outline-danger">Eliminar</a>
+                <button onclick="DeleteUser(this)" class="btn btn-outline-danger">Eliminar</button>
+                <a href="userlog.php?log={$user['id']}" class="btn btn-outline-info">Log</a>
                 </td>
             </tr>
             USER;
@@ -76,6 +77,36 @@ function GetUsers()
         echo<<<INFO
         <div class="alert alert-info" role="alert">
             Aun no hay usuarios registrados        
+        </div>
+        INFO;
+    }
+}
+
+function GetLogs($id)
+{
+    $sql = "select * from user_log where user_id = {$id}";
+
+    $data = Connection::query_arr($sql);
+    $num = 0;
+
+    if(count($data) > 0){
+        foreach ($data as $log) {
+            $num = $num + 1;
+            echo<<<LOG
+            <tr>
+                <th scope="row">{$num}</th>
+                <td>{$log['user_id']}</td>
+                <td>{$log['guest_id']}</td>
+                <td>{$log['remote_addr']}</td>
+                <td>{$log['message']}</td>
+                <td>{$log['log_date']}</td>
+            </tr>
+            LOG;
+        }
+    }else{
+        echo<<<INFO
+        <div class="alert alert-info" role="alert">
+            Aun no hay registros de este usuario       
         </div>
         INFO;
     }
@@ -101,6 +132,17 @@ function Input($id, $label, $value="", $opts=[]){
         </div>
         INPUT;
     }
+    else if($id == "role"){
+        return <<<INPUT
+        <div class="form-group">
+            <label>{$label}</label>
+            <select class="form-control" id="{$id}" name="{$id}" required>
+                <option>Usuario</option>
+                <option>Administrador</option>
+            </select>
+        </div>
+        INPUT;
+    }
     else{
 
         return <<<INPUT
@@ -111,6 +153,20 @@ function Input($id, $label, $value="", $opts=[]){
         INPUT;
     }
     
+}
+
+function Write_log($message, $id, $guestid)
+{
+  if( ($remote_addr = $_SERVER['REMOTE_ADDR']) == '') {
+    $remote_addr = "REMOTE_ADDR_UNKNOWN";
+  }
+ 
+  if( ($request_uri = $_SERVER['REQUEST_URI']) == '') {
+    $request_uri = "REQUEST_URI_UNKNOWN";
+  }
+
+  $sql = "INSERT INTO user_log(user_id, guest_id, remote_addr, request_uri, message) VALUES({$id}, {$guestid}, '{$remote_addr}', '{$request_uri}','{$message}')";
+  Connection::execute($sql);
 }
 
 ?>

@@ -31,12 +31,35 @@ if(isset($_SESSION['user'])){
     header("Location: ../login.php");
 }
 
+if($_POST){
+
+  foreach($_POST as &$value){
+    $value = addslashes($value);
+  }        
+
+  extract($_POST);
+  $userid = $user->getId();
+  $sql = "select * from guests where pasaporte = '{$pasaporte}'";
+  $objs = Connection::query_arr($sql);
+  $objs = $objs[0];
+  $guestid = $objs['id'];
+
+  Write_Log("Eliminar huesped", $userid, $guestid);
+  $sql = "delete from guests where pasaporte = '{$pasaporte}'";
+  Connection::execute($sql);
+    
+  header("Refresh:0");
+}
+
 include('headerpanel.php');
 
 ?>
 
 <div class="container">
   <h2>Huespedes</h2>
+  <br>
+  <a href="guestedit.php" class="btn btn-success"><i class="fas fa-user-plus"></i> Añadir huesped</a>
+  
 </div>
 <br>
 
@@ -63,5 +86,20 @@ include('headerpanel.php');
     </table>
 <div>
 
+<script>
+
+  function DeleteGuest(e){
+    tr = e.parentNode.parentNode;
+    if(confirm('¿Esta seguro que desea eliminar?')){
+      value = tr.getAttribute('index');
+      $.ajax({
+        url: 'home.php',
+        type: 'POST',
+        dataType: 'html',
+        data: {'pasaporte': value}
+      });
+    } 
+  }
+</script>
 
 <?php include('../footer.php'); ?>

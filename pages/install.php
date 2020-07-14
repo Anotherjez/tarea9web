@@ -49,11 +49,28 @@ if($_POST && $_POST['password1'] == $_POST['password2']){
         REFERENCES user_role(id));";
     
     mysqli_query($con, $sql);
+
+    $sql = "CREATE TABLE user_log(
+	id int not null PRIMARY KEY AUTO_INCREMENT,
+    user_id int not null,
+    guest_id int not null,
+    remote_addr varchar(255) NOT NULL DEFAULT '',
+    request_uri varchar(255) NOT NULL DEFAULT '',
+    message text NOT NULL,
+    log_date timestamp NOT NULL DEFAULT NOW(),
+    FOREIGN KEY(user_id)
+    	REFERENCES users(id),
+    FOREIGN KEY(guest_id)
+    	REFERENCES guests(id));";
+    
+    mysqli_query($con, $sql);
+
     $sql = "insert into user_role(name) VALUES('admin'),('user')";
     
     mysqli_query($con, $sql);
+    
     $userpassword = md5($_POST['password1']);
-    $sql = "insert into users(name, username, password, role) VALUES('{$_POST['name']}', '{$_POST['adminuser']}')";
+    $sql = "insert into users(name, username, password, role) VALUES('{$_POST['name']}', '{$_POST['adminuser']}', '{$userpassword}', 1)";
     
     mysqli_query($con, $sql);
     mysqli_close($con);

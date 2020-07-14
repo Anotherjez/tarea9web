@@ -50,6 +50,16 @@ include_once('configx.php');
     {
         return $this->admin;
     }
+
+    public function getId()
+    {
+        $sql = "select * from users where username = '{$this->username}'";
+
+        $data = Connection::query_arr($sql);
+
+        $user = $data[0];
+        return $user['id'];
+    }
  }
 
 ?>
