@@ -56,7 +56,7 @@ if($_POST){
         values('{$nombre}','{$apellido}','{$pasaporte}','{$correo}','{$telefono}','{$pais}','{$firstdate}','{$lastdate}',{$room})";
     }
     
-    Connection::execute($sql);
+    $rsid = Connection::execute($sql, true);
     
     if(!count($objs) > 0){
         $sql = "select * from guests where pasaporte = '{$pasaporte}'";
@@ -67,6 +67,17 @@ if($_POST){
         Write_Log("Añadir huesped", $userid, $guestid);
     }
     
+    $dir = "../../assets/profile";
+        
+    if(!is_dir($dir)){
+        mkdir($dir);
+    }
+
+    $file = $_FILES['foto'];
+    if($file['error'] == 0){
+        move_uploaded_file($file['tmp_name'], "{$dir}/{$rsid}.jpg");
+    }
+
     header("Location:home.php");
 
 }
@@ -109,6 +120,10 @@ include('headerpanel.php');
         <?= Input('firstdate','Fecha de llegada','', ['type'=>'date']) ?>
         <?= Input('lastdate','Fecha de salida','', ['type'=>'date']) ?>
         <?= Input('room','Numero de habitacion','', ['placeholder'=>'301','type'=>'number']) ?>
+        <?= Input('foto','Foto','',['type'=>'file']) ?>
+        
+        <br>
+        <br>
 
         <button type="submit" class="btn btn-primary">Registrar</button>
         <a href="home.php" class="btn btn-secondary">Cancelar</a>

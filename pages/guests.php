@@ -13,10 +13,44 @@ if($_POST){
     
     extract($_POST);
 
-    $sql = "insert into guests(nombre, apellido, pasaporte, correo, telefono, pais, firstdate, lastdate, room) values('{$nombre}','{$apellido}','{$pasaporte}','{$email}','{$telefono}','{$pais}','{$firstdate}','{$seconddate}',{$room})";
-    Connection::execute($sql);
-    header("Location:index.php");
+    $sql = "select * from guests where pasaporte = '{$pasaporte}'";
 
+    $objs = Connection::query_arr($sql);
+    if(count($objs) > 0){
+        
+        $sql = "update guests set nombre = '{$nombre}', apellido = '{$apellido}', correo = '{$correo}', telefono = '{$telefono}', pais = '{$pais}', firstdate = '{$firstdate}', lastdate = '{$lastdate}', room = {$room} where pasaporte = '{$pasaporte}'";
+        $userid = $user->getId();
+        $guestid = $objs[0];
+        $guestid = $guestid['id'];
+        Write_Log("Editar huesped", $userid, $guestid);
+    }else{
+        $sql = "insert into guests(nombre, apellido, pasaporte, correo, telefono, pais, firstdate, lastdate, room) 
+        values('{$nombre}','{$apellido}','{$pasaporte}','{$correo}','{$telefono}','{$pais}','{$firstdate}','{$lastdate}',{$room})";
+    }
+    
+    $rsid = Connection::execute($sql, true);
+    
+    if(!count($objs) > 0){
+        $sql = "select * from guests where pasaporte = '{$pasaporte}'";
+        $objs = Connection::query_arr($sql);
+        $userid = $user->getId();
+        $guestid = $objs[0];
+        $guestid = $guestid['id'];
+        Write_Log("Añadir huesped", $userid, $guestid);
+    }
+    
+    $dir = "../assets/profile";
+        
+    if(!is_dir($dir)){
+        mkdir($dir);
+    }
+
+    $file = $_FILES['foto'];
+    if($file['error'] == 0){
+        move_uploaded_file($file['tmp_name'], "{$dir}/{$rsid}.jpg");
+    }
+
+    header("Location:home.php");
 
 }
 
@@ -31,10 +65,10 @@ if($_POST){
 </section>
 
 <div class="container" style="padding-bottom: 40px;">
-    <form method="POST">
+<form method="POST">
     <div class="form-group">
         <label for="nombrelabel">Nombre</label>
-        <input required type="text" class="form-control" id="nombre" name="nombre">
+        <input required type="text" class="form-control" id="nombre" name="nombre">       
     </div>
     <div class="form-group">
         <label for="apellidolabel">Apellido</label>
@@ -67,6 +101,10 @@ if($_POST){
     <div class="form-group">
         <label for="roomlabel">Numero de habitacion</label>
         <input required type="text" class="form-control room" id="room" name="room" placeholder="301">
+    </div>
+    <div class="form-group">
+        <label>Foto</label>
+        <input type="file" name="foto" id="foto" accept=".jpg, .jpeg, .png">
     </div>
     <button type="submit" class="btn btn-primary">Registrar</button>
     </form>

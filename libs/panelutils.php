@@ -17,8 +17,15 @@ function GetGuests()
         foreach ($data as $guest) {
             $num = $num + 1;
             echo<<<GUEST
-            <tr index="{$guest['pasaporte']}">
+                <tr index="{$guest['pasaporte']}">
                 <th scope="row">{$num}</th>
+                GUEST;
+                if(file_exists("../../assets/profile/{$guest['id']}.jpg")){
+                    echo "<td><img style='height: 60px;' src='../../assets/profile/{$guest['id']}.jpg'></td>";
+                }else{
+                    echo "<td><img style='height: 60px;' src='../../assets/profile/placeholder.jpg'></td>";
+                }
+                echo <<<GUEST
                 <td>{$guest['nombre']}</td>
                 <td>{$guest['apellido']}</td>
                 <td>{$guest['pasaporte']}</td>
@@ -140,6 +147,16 @@ function Input($id, $label, $value="", $opts=[]){
                 <option>Usuario</option>
                 <option>Administrador</option>
             </select>
+        </div>
+        INPUT;
+    }
+    else if($id == 'foto'){
+
+        return <<<INPUT
+        <label>{$label}</label>
+        <div class="custom-file">
+            <input type="{$type}" class="custom-file-input" name="{$id}" id="{$id}" accept=".jpg, .jpeg, .png">
+            <label class="custom-file-label" for="customFile">Elige una foto</label>
         </div>
         INPUT;
     }

@@ -68,6 +68,7 @@ include('headerpanel.php');
     <thead class="thead-dark">
         <tr>
         <th scope="col">#</th>
+        <th scope="col">Foto</th>
         <th scope="col">Nombre</th>
         <th scope="col">Apellido</th>
         <th scope="col">Pasaporte</th>

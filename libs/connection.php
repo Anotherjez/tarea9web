@@ -37,13 +37,16 @@
                 return true;                
             }            
         }
-        public static function execute($sql){
+        public static function execute($sql, $returnID = false){
 
             if(self::$instancia == null){
                 self::$instancia = new Connection();
             }
-
             $rs = mysqli_query(self::$instancia->myCon, $sql);
+
+            if($returnID){
+                return mysqli_insert_id(self::$instancia->myCon);
+            }
 
             return $rs;
         }
